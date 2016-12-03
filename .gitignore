@@ -1,0 +1,6 @@
+# OS and IDE files and folders
+.idea/
+nbproject/
+
+# App files and folders
+node_modules/
