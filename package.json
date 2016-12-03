@@ -2,8 +2,8 @@
   "name": "mynodefy",
   "version": "1.0.0",
   "description": "",
-  "license": "ISC",
-  "main": "server.js",
+  "license": "MIT",
+  "main": "index.js",
   "author": "Vinicius Guedes",
   "dependencies": {
     "mysql": "^2.12.0",
@@ -14,6 +14,6 @@
     "mocha": "^3.2.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha"
+    "test": "nodejs node_modules/.bin/mocha tests/"
   }
 }
