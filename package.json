@@ -1,0 +1,19 @@
+{
+  "name": "mynodefy",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "main": "server.js",
+  "author": "Vinicius Guedes",
+  "dependencies": {
+    "mysql": "^2.12.0",
+    "promise": "^7.1.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha"
+  }
+}
