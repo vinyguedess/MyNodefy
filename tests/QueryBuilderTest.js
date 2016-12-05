@@ -20,18 +20,47 @@ describe('QueryBuilderTest', function () {
             });
         });
 
-        describe('Executing INSERT queries', function() {
-            it('Should execute a simple insert', function(done) {
+        describe('Executing INSERT queries', function () {
+            it('Should execute a simple insert', function (done) {
                 new QueryBuilder().insert().into('dominios')
                     .addField('url', 'google.com')
                     .addField('data_criacao', new Date())
                     .execute()
-                    .then(function(response) {
+                    .then(function (response) {
                         assert.isObject(response);
                         assert.equal(1, response.affectedRows);
                         assert.equal(2, response.serverStatus);
                     }).then(done);
             });
+        });
+    });
+
+    describe('QueryBuilderUpdateTest', function () {
+        describe('Generating UPDATE queries', function () {
+            it('Should generate simple update queries', function () {
+                assert.equal('UPDATE dominios SET url = "techtudo.com.br" WHERE id IN (1, 2, 3, 4);', new QueryBuilder()
+                    .update('dominios')
+                    .set('url', "techtudo.com.br")
+                    .criteria.where('id', [1, 2, 3, 4])
+                    .toSql());
+
+                assert.equal('UPDATE dominios SET url = "techtudo.com.br" WHERE id <> 3;', new QueryBuilder()
+                    .update('dominios')
+                    .set('url', "techtudo.com.br")
+                    .criteria.where('id', '<>', 3)
+                    .toSql());
+            });
+        });
+
+        describe('Executing UPDATE queries', function (done) {
+            new QueryBuilder().update('dominios')
+                .set('url', "techtudo.com.br")
+                .criteria.where('id', [1, 2, 3, 4])
+                .execute()
+                .then(function (response) {
+                    assert.isObject(response);
+                    assert.isTrue(response.affectedRows >= 0);
+                }).then(done);
         });
     });
 
@@ -87,24 +116,24 @@ describe('QueryBuilderTest', function () {
                 assert.equal('SELECT * FROM dominios WHERE dominios.url LIKE "%groupie%";', new QueryBuilder()
                     .select()
                     .from('dominios')
-                    .where('dominios.url', 'LIKE', '%groupie%')
+                    .criteria.where('dominios.url', 'LIKE', '%groupie%')
                     .toSql());
 
                 assert.equal('SELECT * FROM dominios WHERE dominios.id >= 1 OR dominio.id = 2;', new QueryBuilder()
                     .select()
                     .from('dominios')
-                    .orWhere('dominios.id', '>=', 1)
-                    .orWhere('dominio.id', 2)
+                    .criteria.orWhere('dominios.id', '>=', 1)
+                    .criteria.orWhere('dominio.id', 2)
                     .toSql());
 
                 assert.equal('SELECT * FROM dominios WHERE (dominios.status is not null AND dominios.id > 0) OR dominios.id = 0;', new QueryBuilder()
                     .select()
                     .from('dominios')
-                    .orWhere([
+                    .criteria.orWhere([
                         ['dominios.status', '<>', null],
                         ['dominios.id', '>', 0]
                     ])
-                    .orWhere('dominios.id', 0)
+                    .criteria.orWhere('dominios.id', 0)
                     .toSql());
             });
 
@@ -165,6 +194,39 @@ describe('QueryBuilderTest', function () {
                     assert.isNumber(response);
                 }).then(done);
             });
+        });
+    });
+
+    describe('QueryBuilderDeleteTest', function () {
+        it('Generating DELETE queries', function () {
+            assert.equal('DELETE FROM dominios;', new QueryBuilder()
+                .delete()
+                .from('dominios')
+                .toSql());
+
+            assert.equal('DELETE FROM dominios WHERE id = 3 OR id = 4;', new QueryBuilder()
+                .delete()
+                .from('dominios')
+                .criteria.orWhere('id', 3)
+                .criteria.orWhere('id', 4)
+                .toSql());
+
+            assert.equal('DELETE FROM dominios WHERE id IN (1, 5, 7);', new QueryBuilder()
+                .delete()
+                .from('dominios')
+                .criteria.where('id', [1, 5, 7])
+                .toSql());
+        });
+
+        it('Executing DELETE queries', function(done) {
+            new QueryBuilder().delete().from('dominios')
+                .criteria.where('id', '>', 0)
+                .execute()
+                .then(function(response) {
+                    assert.isObject(response);
+                    assert.isTrue(response.affectedRows >= 0);
+                    assert.isTrue(response.changedRows === 0);
+                }).then(done);
         });
     });
 

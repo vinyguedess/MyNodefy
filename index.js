@@ -14,4 +14,4 @@ Date.prototype.format = function (format) {
     return formattedDate;
 }
 
-exports.QueryBuilder = require('./lib/QueryBuilder');
+exports.QueryBuilder = require('./lib/QueryBuilder/index');
