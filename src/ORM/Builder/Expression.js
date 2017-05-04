@@ -47,6 +47,14 @@ class Expression {
     return `${field} BETWEEN ${this._treatValue(first)} AND ${this._treatValue(last)}`;
   }
 
+  andX() {
+    return this._twoWayFilterAttach(arguments, "AND");
+  }
+
+  orX() {
+    return this._twoWayFilterAttach(arguments, "OR");
+  }
+
   _treatValue(value) {
     if (Array.isArray(value))
       return value
@@ -60,6 +68,14 @@ class Expression {
     if (typeof value === "string") return `"${value}"`;
 
     return value;
+  }
+
+  _twoWayFilterAttach(filters, type) {
+    let filter = "(";
+    filter += Object.keys(filters).map(k => filters[k]).join(` ${type} `);
+    filter += ")";
+
+    return filter;
   }
 }
 

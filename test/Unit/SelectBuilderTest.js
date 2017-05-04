@@ -146,7 +146,31 @@ describe("SelectBuilderTest", () => {
       );
     });
 
-    it("Should make advanced filters and more complex querying", () => {});
+    it("Should make advanced filters and more complex querying", () => {
+      assert.equal(
+        "SELECT * FROM table_name WHERE id >= 1 AND (value < 100 AND amount <= 10);",
+        new SelectBuilder()
+          .from("table_name")
+          .where(expr.gte("id", 1))
+          .where(expr.andX(expr.lt("value", 100), expr.lte("amount", 10)))
+          .toSql()
+      );
+
+      assert.equal(
+        "SELECT * FROM table_name WHERE value < 100 AND " +
+          "(amount > 10 AND (visitor = 2 OR visitor = 2.5));",
+        new SelectBuilder()
+          .from("table_name")
+          .where(expr.lt("value", 100))
+          .where(
+            expr.andX(
+              expr.gt("amount", 10),
+              expr.orX(expr.eq("visitor", 2), expr.eq("visitor", 2.5))
+            )
+          )
+          .toSql()
+      );
+    });
   });
 
   describe("Grouping results", () => {
