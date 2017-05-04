@@ -1,19 +1,36 @@
 {
   "name": "mynodefy",
-  "version": "1.0.0",
-  "description": "",
+  "version": "2.0.0-beta",
+  "description": "A performatic and secure NodeJS' MySQL ORM",
+  "keywords": [
+    "mysql",
+    "orm",
+    "activerecord"
+  ],
   "license": "MIT",
   "main": "index.js",
-  "author": "Vinicius Guedes",
+  "author": "Vinicius Guedes <viniciusgued@gmail.com>",
+  "repository": "vinyguedess/mynodefy",
+
   "dependencies": {
-    "mysql": "^2.12.0",
-    "promise": "^7.1.1"
+    "mysql": "^2.12.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "mocha": "^3.2.0"
+    "husky": "^0.13.3",
+    "lint-staged": "^3.4.1",
+    "mocha": "^3.2.0",
+    "prettier": "^1.3.0"
+  },
+  
+  "lint-staged": {
+    "*.js": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "scripts": {
-    "test": "nodejs node_modules/.bin/mocha tests/"
+    "precommit": "lint-staged",
+    "test": "istanbul cover node_modules/.bin/_mocha && codecov"
   }
 }

@@ -1,0 +1,18 @@
+language: node_js
+node_js:
+  - "6"
+
+before_install:
+  - gem update --system 1.8.30
+
+install:
+  - npm install -g codecov
+  - npm install -g istanbul
+  - npm install
+
+deploy:
+  provider: npm
+  email: "viniciusgued@gmail.com"
+  api_key: "e1ea496f-22c1-4d6b-aff4-9874164bcf7f"
+  on:
+    branch: master

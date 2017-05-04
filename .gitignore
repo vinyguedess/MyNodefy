@@ -1,5 +1,6 @@
 # OS and IDE files and folders
 .idea/
+.vscode/
 nbproject/
 
 # App files and folders
