@@ -95,7 +95,59 @@ describe("SelectBuilderTest", () => {
     });
   });
 
-  describe("Writing simple filters", () => {});
+  describe("Writing query filters", () => {
+    let expr = new SelectBuilder().expr();
+
+    it("Should make a simple where", () => {
+      assert.equal(
+        "SELECT * FROM table_name WHERE id = 10;",
+        new SelectBuilder().from("table_name").where(expr.eq("id", 10)).toSql()
+      );
+
+      assert.equal(
+        "SELECT * FROM table_name WHERE id <> 10;",
+        new SelectBuilder().from("table_name").where(expr.neq("id", 10)).toSql()
+      );
+
+      assert.equal(
+        "SELECT * FROM table_name WHERE id IS NOT NULL;",
+        new SelectBuilder()
+          .from("table_name")
+          .where(expr.isNotNull("id"))
+          .toSql()
+      );
+    });
+
+    it("Should make not too much complex wheres", () => {
+      assert.equal(
+        'SELECT * FROM table_name WHERE id IN (10,20) AND nome LIKE "%test%";',
+        new SelectBuilder()
+          .from("table_name")
+          .where(expr.in("id", [10, 20]), expr.like("nome", "%test%"))
+          .toSql()
+      );
+
+      assert.equal(
+        "SELECT * FROM table_name WHERE id NOT IN (1,2,3) OR status IS NULL;",
+        new SelectBuilder()
+          .from("table_name")
+          .where(expr.notIn("id", [1, 2, 3]))
+          .orWhere(expr.isNull("status"))
+          .toSql()
+      );
+
+      assert.equal(
+        "SELECT * FROM table_name WHERE num BETWEEN 1 AND 20 OR num > 100;",
+        new SelectBuilder()
+          .from("table_name")
+          .where(expr.between("num", 1, 20))
+          .orWhere(expr.gt("num", 100))
+          .toSql()
+      );
+    });
+
+    it("Should make advanced filters and more complex querying", () => {});
+  });
 
   describe("Grouping results", () => {
     it("Should simply group results", () => {

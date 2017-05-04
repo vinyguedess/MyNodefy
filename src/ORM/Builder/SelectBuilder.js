@@ -1,6 +1,14 @@
+const Expression = require("./Expression");
+
 class SelectBuilder {
   constructor() {
+    this._expr = new Expression();
+
     this.select("*");
+  }
+
+  expr() {
+    return this._expr;
   }
 
   select(fields) {
@@ -45,6 +53,36 @@ class SelectBuilder {
         },
         join
       )
+    );
+
+    return this;
+  }
+
+  where() {
+    if (!Array.isArray(this._where)) this._where = [];
+
+    this._where = this._where.concat(
+      Object.keys(arguments).map(k => {
+        return {
+          filter: arguments[k],
+          next: "AND"
+        };
+      })
+    );
+
+    return this;
+  }
+
+  orWhere() {
+    if (!Array.isArray(this._where)) this._where = [];
+
+    this._where = this._where.concat(
+      Object.keys(arguments).map(k => {
+        return {
+          filter: arguments[k],
+          next: "OR"
+        };
+      })
     );
 
     return this;
@@ -124,6 +162,14 @@ class SelectBuilder {
         query +=
           ` ${join.type} JOIN ${join.table} ` +
           `ON ${join.from}.${join.field} = ${join.table}.${join.other_field}`;
+      });
+    }
+
+    if (Array.isArray(this._where)) {
+      query += " WHERE";
+      this._where.forEach((filter, index, all) => {
+        if (index > 0) query += ` ${filter.next} ${filter.filter}`;
+        else query += ` ${filter.filter}`;
       });
     }
 
