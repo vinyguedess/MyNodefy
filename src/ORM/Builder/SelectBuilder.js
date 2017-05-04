@@ -15,6 +15,41 @@ class SelectBuilder {
     return this;
   }
 
+  join() {
+    if (!Array.isArray(this._joins)) this._joins = [];
+
+    let join = {};
+    if (arguments.length > 1) {
+      join.type = arguments[0];
+      join.table = arguments[1];
+      join.field = arguments[2];
+      join.other_field = arguments[3];
+      if (typeof arguments[4] !== "undefined") join.from = arguments[4];
+    }
+
+    if (arguments.length === 1 && typeof arguments[0] === "object")
+      join = arguments[0];
+
+    ["table", "field", "other_field"].map(attr => {
+      if (typeof join[attr] === "undefined")
+        throw new Error("Your join must set info about " + attr);
+
+      return attr;
+    });
+
+    this._joins.push(
+      Object.assign(
+        {
+          type: "INNER",
+          from: this._from
+        },
+        join
+      )
+    );
+
+    return this;
+  }
+
   group() {
     if (!Array.isArray(this._group)) this._group = [];
 
@@ -38,7 +73,7 @@ class SelectBuilder {
   }
 
   order(argsT) {
-    if (typeof this._order === "undefined") this._order = [];
+    if (!Array.isArray(this._order)) this._order = [];
 
     if (arguments.length === 1) this._order.push(arguments[0]);
 
@@ -83,6 +118,14 @@ class SelectBuilder {
       );
 
     let query = `SELECT ${this._fields} FROM ${this._from}`;
+
+    if (Array.isArray(this._joins)) {
+      this._joins.forEach(join => {
+        query +=
+          ` ${join.type} JOIN ${join.table} ` +
+          `ON ${join.from}.${join.field} = ${join.table}.${join.other_field}`;
+      });
+    }
 
     if (Array.isArray(this._group))
       query += " GROUP BY " + this._group.join(",");

@@ -23,7 +23,77 @@ describe("SelectBuilderTest", () => {
     });
   });
 
-  describe("Writing queries that join results", () => {});
+  describe("Writing queries that join results", () => {
+    it("Should make simple joins", () => {
+      assert.equal(
+        "SELECT * FROM table_name" +
+          " INNER JOIN another_table ON table_name.fk_id = another_table.id;",
+        new SelectBuilder()
+          .from("table_name")
+          .join({
+            type: "INNER",
+            table: "another_table",
+            field: "fk_id",
+            other_field: "id"
+          })
+          .toSql()
+      );
+
+      assert.equal(
+        "SELECT * FROM table_name" +
+          " INNER JOIN another_table ON table_name.fk_id = another_table.id" +
+          " LEFT JOIN third_table ON other_table.id = third_table.fk_id;",
+        new SelectBuilder()
+          .from("table_name")
+          .join({
+            table: "another_table",
+            field: "fk_id",
+            other_field: "id"
+          })
+          .join({
+            type: "LEFT",
+            from: "other_table",
+            table: "third_table",
+            field: "id",
+            other_field: "fk_id"
+          })
+          .toSql()
+      );
+    });
+
+    it("Should still make simple joins in a different way", () => {
+      assert.equal(
+        "SELECT * FROM table_name" +
+          " INNER JOIN another_table ON table_name.fk_id = another_table.id;",
+        new SelectBuilder()
+          .from("table_name")
+          .join("INNER", "another_table", "fk_id", "id")
+          .toSql()
+      );
+
+      assert.equal(
+        "SELECT * FROM table_name" +
+          " INNER JOIN another_table ON table_name.fk_id = another_table.id" +
+          " LEFT JOIN third_table ON other_table.id = third_table.fk_id;",
+        new SelectBuilder()
+          .from("table_name")
+          .join("INNER", "another_table", "fk_id", "id")
+          .join("LEFT", "third_table", "id", "fk_id", "other_table")
+          .toSql()
+      );
+    });
+
+    it("Should validate if you wrote a join correctly", () => {
+      assert.throw(() => {
+        new SelectBuilder()
+          .from("table_name")
+          .join({
+            type: "INNER"
+          })
+          .toSql();
+      });
+    });
+  });
 
   describe("Writing simple filters", () => {});
 
@@ -80,6 +150,12 @@ describe("SelectBuilderTest", () => {
           .order("id")
           .toSql()
       );
+    });
+
+    it("Should validate errors", () => {
+      assert.throw(() => {
+        new SelectBuilder().from("table_name").order("id", "SORT").getSql();
+      });
     });
   });
 
