@@ -25,14 +25,32 @@ class SelectBuilder {
         this._group = this._group.concat(arguments[0]);
     }
 
-    if (arguments.length > 1) {
-      for (let item of arguments)
-        this._group.push(item);
-    }
+    if (arguments.length > 1)
+      this._group = this._group.concat(
+        Object.keys(arguments).map(key => arguments[key])
+      );
 
     this._group = this._group.filter((element, index, self) => {
       return index === self.indexOf(element);
     });
+
+    return this;
+  }
+
+  order(argsT) {
+    if (typeof this._order === "undefined") this._order = [];
+
+    if (arguments.length === 1) this._order.push(arguments[0]);
+
+    if (arguments.length === 2) {
+      if (
+        arguments[1].toLowerCase() !== "asc" &&
+        arguments[1].toLowerCase() !== "desc"
+      )
+        throw new Error("Second argument must be ASC or DESC");
+
+      this._order.push(Object.keys(arguments).map(key => arguments[key]));
+    }
 
     return this;
   }
@@ -66,9 +84,20 @@ class SelectBuilder {
 
     let query = `SELECT ${this._fields} FROM ${this._from}`;
 
-    console.log(this._group);
     if (Array.isArray(this._group))
       query += " GROUP BY " + this._group.join(",");
+
+    if (typeof this._order !== "undefined") {
+      query +=
+        " ORDER BY " +
+        this._order
+          .map(element => {
+            if (Array.isArray(element)) return element.join(" ");
+
+            return element;
+          })
+          .join(",");
+    }
 
     if (typeof this._limit !== "undefined") query += ` LIMIT ${this._limit}`;
 

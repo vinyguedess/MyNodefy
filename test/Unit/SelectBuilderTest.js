@@ -48,6 +48,41 @@ describe("SelectBuilderTest", () => {
     });
   });
 
+  describe("Ordering results", () => {
+    it("Should simply order results", () => {
+      assert.equal(
+        "SELECT * FROM table_name ORDER BY id;",
+        new SelectBuilder().from("table_name").order("id").toSql()
+      );
+
+      assert.equal(
+        "SELECT * FROM table_name ORDER BY created_at,id;",
+        new SelectBuilder()
+          .from("table_name")
+          .order("created_at")
+          .order("id")
+          .toSql()
+      );
+    });
+
+    it("Should order declaring if ascending or descending", () => {
+      assert.equal(
+        "SELECT * FROM table_name ORDER BY id DESC;",
+        new SelectBuilder().from("table_name").order("id", "DESC").toSql()
+      );
+
+      assert.equal(
+        "SELECT * FROM table_name ORDER BY created_at DESC,value ASC,id;",
+        new SelectBuilder()
+          .from("table_name")
+          .order("created_at", "DESC")
+          .order("value", "ASC")
+          .order("id")
+          .toSql()
+      );
+    });
+  });
+
   describe("Limiting query data to be returned", () => {
     it("Should limit query", () => {
       assert.equal(

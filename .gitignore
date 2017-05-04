@@ -4,4 +4,6 @@
 nbproject/
 
 # App files and folders
+coverage/
 node_modules/
+npm-debug.log*
