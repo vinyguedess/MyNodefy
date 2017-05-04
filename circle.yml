@@ -5,3 +5,5 @@ machine:
 dependencies:
   pre:
     - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+    - npm install -g istanbul 
+    - npm install -g codecov
