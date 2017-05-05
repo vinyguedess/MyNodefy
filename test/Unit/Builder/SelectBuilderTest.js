@@ -1,6 +1,6 @@
 const assert = require("chai").assert;
 
-const SelectBuilder = require("./../../src/ORM/Builder/SelectBuilder");
+const SelectBuilder = require("./../../../src/ORM/Builder/SelectBuilder");
 
 describe("SelectBuilderTest", () => {
   describe("Making simple queries", () => {
