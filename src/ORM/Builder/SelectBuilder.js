@@ -1,4 +1,4 @@
-const Expression = require("./Expression");
+const Expression = require("./Query/Expression");
 
 class SelectBuilder {
   constructor() {
