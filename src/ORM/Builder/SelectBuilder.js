@@ -1,14 +1,10 @@
-const Expression = require("./Query/Expression");
+const Builder = require("./Builder");
 
-class SelectBuilder {
+class SelectBuilder extends Builder {
   constructor() {
-    this._expr = new Expression();
+    super();
 
     this.select("*");
-  }
-
-  expr() {
-    return this._expr;
   }
 
   select(fields) {
@@ -53,36 +49,6 @@ class SelectBuilder {
         },
         join
       )
-    );
-
-    return this;
-  }
-
-  where() {
-    if (!Array.isArray(this._where)) this._where = [];
-
-    this._where = this._where.concat(
-      Object.keys(arguments).map(k => {
-        return {
-          filter: arguments[k],
-          next: "AND"
-        };
-      })
-    );
-
-    return this;
-  }
-
-  orWhere() {
-    if (!Array.isArray(this._where)) this._where = [];
-
-    this._where = this._where.concat(
-      Object.keys(arguments).map(k => {
-        return {
-          filter: arguments[k],
-          next: "OR"
-        };
-      })
     );
 
     return this;
