@@ -5,11 +5,14 @@ class Entity {
 
   set(key, value) {
     if (typeof key === "object") {
-      Object.keys(key).map(() => {
-        console.log(this);
+      Object.keys(key).map(k => {
+        this[k] = key[k];
       });
+      return;
     }
 
     this[key] = value;
   }
 }
+
+module.exports = Entity;
