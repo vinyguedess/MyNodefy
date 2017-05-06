@@ -1,14 +1,21 @@
 [![CircleCI](https://circleci.com/gh/vinyguedess/mynodefy/tree/master.svg?style=svg)](https://circleci.com/gh/vinyguedess/mynodefy/tree/master)
 
 # MyNodefy
-A NodeJS's ORM designed for designers.
+A NodeJS's ORM designed for designers. And, based on PHP's Doctrine.
 
 ## First things first
 Before you can use it good, you must define and configure some informations.
 
 ### Connection
+You must define your connection informations before you could really start.
+```javascript
+    const mynodefy = require('mynodefy');
 
-### Model
+    mynodefy.Connection.define('host', 'username', 'password', 'database');
+```
+
+### Entity
+
 
 ### Repository
 

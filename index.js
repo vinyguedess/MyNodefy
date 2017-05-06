@@ -26,4 +26,10 @@ Date.prototype.format = function(format) {
   return formattedDate;
 };
 
-module.exports = {};
+module.exports = {
+  Connection: require("./src/DB/Connection"),
+  ORM: {
+    Repository: require("./src/ORM/BaseRepository"),
+    Entity: require("./src/ORM/Entity")
+  }
+};
