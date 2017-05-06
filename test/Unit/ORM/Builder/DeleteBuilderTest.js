@@ -1,6 +1,6 @@
 const assert = require("chai").assert;
 
-const DeleteBuilder = require("./../../../src/ORM/Builder/DeleteBuilder");
+const DeleteBuilder = require("./../../../../src/ORM/Builder/DeleteBuilder");
 
 describe("DeleteBuilderTest", () => {
   describe("Writing simple deletes", () => {

@@ -1,6 +1,6 @@
 const assert = require("chai").assert;
 
-const InsertBuilder = require("./../../../src/ORM/Builder/InsertBuilder");
+const InsertBuilder = require("./../../../../src/ORM/Builder/InsertBuilder");
 
 describe("InsertBuilderTest", () => {
   describe("Writing simple inserts", () => {

@@ -1,6 +1,6 @@
 const assert = require("chai").assert;
 
-const UpdateBuilder = require("./../../../src/ORM/Builder/UpdateBuilder");
+const UpdateBuilder = require("./../../../../src/ORM/Builder/UpdateBuilder");
 
 describe("UpdateBuilderTest", () => {
   describe("Making simple updates", () => {
