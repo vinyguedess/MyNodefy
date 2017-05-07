@@ -19,6 +19,7 @@ class User extends Entity {
       password: {
         type: "varchar",
         max: 32,
+        min: 6,
         required: true
       }
     };

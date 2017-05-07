@@ -17,7 +17,8 @@ describe("ConnectionTest", () => {
         },
         name: { type: "varchar", size: 100, null: false },
         login: { type: "varchar", size: 20, null: false },
-        password: { type: "varchar", size: 32, null: false }
+        password: { type: "varchar", size: 32, null: false },
+        age: { type: "integer" }
       }).then(response => {
         assert.equal(2, response.serverStatus);
 
@@ -50,6 +51,16 @@ describe("ConnectionTest", () => {
         assert.isAtLeast(response.length, 1);
         assert.equal("Vinicius Guedes", response[0].name);
         assert.equal("vinyguedess", response[0].login);
+
+        done();
+      });
+    });
+
+    it("Should generate errors", done => {
+      let query = new SelectBuilder().from("users_").toSql();
+
+      Connection.query(query).catch(err => {
+        assert.equal(err.code, "ER_NO_SUCH_TABLE");
 
         done();
       });

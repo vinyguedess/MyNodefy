@@ -41,7 +41,7 @@ class EntityRules {
 
       if (
         typeof fieldRule.min === "number" &&
-        !isOverMinChars(fieldRule.max, entity[field])
+        !isOverMinChars(fieldRule.min, entity[field])
       )
         this.addError(field, `Has less than ${fieldRule.min}`);
 

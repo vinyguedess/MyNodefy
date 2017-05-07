@@ -53,7 +53,8 @@ class Connection {
 
       if (
         field.type.toLowerCase() === "integer" &&
-        field.key.toLowerCase() === "primary"
+        (typeof field.key !== "undefined" &&
+          field.key.toLowerCase() === "primary")
       )
         query += " PRIMARY KEY AUTO_INCREMENT";
 
