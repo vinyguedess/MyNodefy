@@ -69,7 +69,8 @@ describe("EntityTest", () => {
       u.set("password", "ss@12");
 
       let errors = ER.validate(u).getErrors();
-      console.log(errors);
+      assert.isTrue(Array.isArray(errors["name"]));
+      assert.isTrue(Array.isArray(errors["password"]));
     });
   });
 });

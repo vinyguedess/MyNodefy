@@ -95,7 +95,7 @@ class SelectBuilder extends Builder {
   }
 
   limit(limit) {
-    if (typeof limit !== "number")
+    if (typeof limit !== "number" && limit !== null)
       throw new Error("Query limit must be a number");
 
     this._limit = limit;
@@ -104,7 +104,7 @@ class SelectBuilder extends Builder {
   }
 
   offset(offset) {
-    if (typeof offset !== "number")
+    if (typeof offset !== "number" && offset !== null)
       throw new Error("Query offset must be a number");
 
     this._offset = offset;
@@ -154,9 +154,9 @@ class SelectBuilder extends Builder {
           .join(",");
     }
 
-    if (typeof this._limit !== "undefined") query += ` LIMIT ${this._limit}`;
+    if (typeof this._limit === "number") query += ` LIMIT ${this._limit}`;
 
-    if (typeof this._offset !== "undefined") query += ` OFFSET ${this._offset}`;
+    if (typeof this._offset === "number") query += ` OFFSET ${this._offset}`;
 
     return query + ";";
   }

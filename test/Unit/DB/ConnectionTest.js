@@ -5,7 +5,9 @@ const Connection = require("./../../../src/DB/Connection"),
   SelectBuilder = require("./../../../src/ORM/Builder/SelectBuilder");
 
 describe("ConnectionTest", () => {
-  Connection.define("localhost", "root", "", "mynodefy");
+  before(() => {
+    Connection.define("127.0.0.1", "root", "", "mynodefy");
+  });
 
   describe("Creating tables", () => {
     it("Should create a table so we can run other tests", done => {
