@@ -1,6 +1,16 @@
 machine:
   node:
     version: 6.10.0
+  environment:
+    MYSQL_HOST: "localhost"
+    MYSQL_USER: "ubuntu"
+    MYSQL_PASS: "",
+    MYSQL_DBASE: "circle_test"
+
+
+database:
+  override:
+   - mysql -u ubuntu circle_test
 
 dependencies:
   pre:
