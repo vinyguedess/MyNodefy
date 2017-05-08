@@ -1,11 +1,12 @@
 const Connection = require("./../../index").Connection,
   SelectBuilder = require("./Builder/SelectBuilder"),
-  InsertBuilder = require("./Builder/InsertBuilder");
+  InsertBuilder = require("./Builder/InsertBuilder"),
+  UpdateBuilder = require("./Builder/UpdateBuilder");
 
 let defaultEntity, tableName;
 let treatRawPacketToEntity = response => {
   return response.map(element => {
-    let e = new defaultEntity();
+    let e = new defaultEntity("found");
     e.set(element);
 
     return e;
@@ -27,19 +28,30 @@ class BaseRepository {
   insert(entity) {
     let attributes = entity.get();
 
-    let queryBuilder = new InsertBuilder(tableName).set(entity.get());
+    let query = new InsertBuilder(tableName).set(attributes).toSql();
 
-    return Connection.query(queryBuilder.toSql()).then(response => {
-      if (response.insertId > 0) {
-        entity[entity.getPk()] = response.insertId;
-        return true;
-      }
+    return Connection.query(query).then(response => {
+      if (response.insertId > 0) entity[entity.getPk()] = response.insertId;
 
-      return false;
+      return response.insertId > 0;
     });
   }
 
-  update(entity) {}
+  update(entity) {
+    let attributes = entity.get();
+    delete attributes[entity.getPk()];
+
+    let queryBuilder = new UpdateBuilder(tableName),
+      expr = queryBuilder.expr(),
+      query = queryBuilder
+        .set(attributes)
+        .where(expr.eq(entity.getPk(), entity.get(entity.getPk())))
+        .toSql();
+
+    return Connection.query(query).then(response => {
+      return response.affectedRows === 1;
+    });
+  }
 
   find(options) {
     if (typeof options === "undefined") options = {};
@@ -66,7 +78,7 @@ class BaseRepository {
         );
       },
       get: () =>
-        Connection.query(queryBuilder.getSql()).then(response =>
+        Connection.query(queryBuilder.toSql()).then(response =>
           treatRawPacketToEntity(response)
         ),
       first: () =>

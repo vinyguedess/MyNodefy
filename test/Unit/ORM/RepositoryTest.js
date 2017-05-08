@@ -46,6 +46,14 @@ describe("RepositoryTest", () => {
       });
     });
 
+    it("Should get a paginated data", done => {
+      ur.find({ limit: 3, offset: 3 }).get().then(collection => {
+        assert.equal(1, collection.length);
+
+        done();
+      });
+    });
+
     it("Should get a list of filtered data", done => {
       ur.find().by("name", "Malala").all().then(collection => {
         assert.instanceOf(collection[0], User);
@@ -55,9 +63,17 @@ describe("RepositoryTest", () => {
     });
 
     it("Should get only one entity", done => {
-      ur.find().by("id", 3).first().then(u => {
-        assert.instanceOf(u, User);
-        assert.equal(u.get("name"), "Kurt Russel");
+      ur.find().by("id", 3).first().then(user => {
+        assert.instanceOf(user, User);
+        assert.equal(user.get("name"), "Kurt Russel");
+
+        done();
+      });
+    });
+
+    it("Should return null when not found entity", done => {
+      ur.find().by("id", 100).first().then(user => {
+        assert.isNull(user);
 
         done();
       });
@@ -65,6 +81,7 @@ describe("RepositoryTest", () => {
   });
 
   describe("Repository saving data", () => {
+    let ur = new UserRepository(User);
     it("Should insert data", done => {
       let u = new User();
       u.set({
@@ -73,14 +90,22 @@ describe("RepositoryTest", () => {
         password: "dai@san"
       });
 
-      let ur = new UserRepository(User);
-
       ur.save(u).then(response => {
         assert.isNumber(u.id);
         assert.equal(5, u.id);
         assert.isTrue(response);
 
         done();
+      });
+    });
+
+    it("Should update found data", done => {
+      ur.find().by("id", 5).first().then(user => {
+        ur.save(user).then(response => {
+          assert.isTrue(response);
+
+          done();
+        });
       });
     });
   });

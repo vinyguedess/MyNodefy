@@ -1,8 +1,10 @@
-let isNewRecord;
+let mode, isNewRecord, currentAttributes = {};
 
 class Entity {
-  constructor() {
-    isNewRecord = true;
+  constructor(entityMode) {
+    mode = entityMode;
+
+    isNewRecord = mode === "found" ? false : true;
   }
 
   static tableName() {
@@ -34,8 +36,6 @@ class Entity {
       });
       return;
     }
-
-    if (key === this.getPk()) isNewRecord = false;
 
     this[key] = value;
   }
