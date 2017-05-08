@@ -7,11 +7,6 @@ machine:
     MYSQL_PASS: 
     MYSQL_DBASE: circle_test
 
-
-database:
-  override:
-   - mysql -u ubuntu circle_test
-
 dependencies:
   pre:
     - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
