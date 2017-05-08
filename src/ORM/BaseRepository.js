@@ -70,7 +70,26 @@ class BaseRepository {
 
         return finder;
       },
+      where: {
+        and: w => {
+          queryBuilder.where(w);
 
+          return finder;
+        },
+        or: w => {
+          queryBuilder.orWhere(w);
+
+          return finder;
+        }
+      },
+
+      count: () => {
+        let query = queryBuilder.select("COUNT(*) `total`").toSql();
+
+        return Connection.query(query).then(response => {
+          return response[0].total;
+        });
+      },
       all: () => {
         let query = queryBuilder.limit(null).offset(null).toSql();
 

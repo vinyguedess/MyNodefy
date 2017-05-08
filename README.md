@@ -41,7 +41,23 @@ You can also pass information about database table name that is being represente
 ```
 
 ### Repository
+Your Repository will work accordling to data configured on Entity.
+But, you can create your own repository and add method respective to your business rules.
 
+```javascript
+    const Repository = require('mynodefy').Repository;
+
+    class MyRepository extends Repository {}
+
+    let repo = new MyRepository(MyEntity);
+
+    repo
+        .find()
+        .first()
+        .then(entity => {
+            //Do something with entity
+        });
+```
 
 ## Querying
 
@@ -54,4 +70,4 @@ You can also pass information about database table name that is being represente
 
 ## Conclusion
 
-Sorry if you feel frustrated seeing this document. But, documentation is being developed and long project is being developed too.
+Sorry if you feel frustrated seeing this document. But, documentation is being developed as long as project is being developed too.

@@ -1,6 +1,7 @@
 const assert = require("chai").assert;
 
 const Connection = require("./../../../index").Connection,
+  Expression = require("./../../../index").ORM.Query.Expression,
   User = require("./../../DataProvider/Entity/User"),
   UserRepository = require("./../../DataProvider/Repository/UserRepository");
 
@@ -37,6 +38,14 @@ describe("RepositoryTest", () => {
   describe("Repository returning entity", () => {
     let ur = new UserRepository(User);
 
+    it("Should get an amount of data existent on table", done => {
+      ur.find().count().then(amount => {
+        assert.equal(4, amount);
+
+        done();
+      });
+    });
+
     it("Should get a list of data inserted before", done => {
       ur.find().all().then(collection => {
         assert.equal(4, collection.length);
@@ -44,6 +53,20 @@ describe("RepositoryTest", () => {
 
         done();
       });
+    });
+
+    it("Should get a well filtered response", done => {
+      let expr = new Expression();
+
+      ur
+        .find()
+        .where.and(expr.orX(expr.eq("id", 1), expr.eq("id", 2)))
+        .count()
+        .then(amount => {
+          assert.equal(2, amount);
+
+          done();
+        });
     });
 
     it("Should get a paginated data", done => {
