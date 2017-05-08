@@ -3,20 +3,6 @@ const Connection = require("./../../index").Connection,
   InsertBuilder = require("./Builder/InsertBuilder");
 
 let defaultEntity, tableName;
-let entityHasMethod = (entity, tableName) =>
-  typeof entity[tableName] !== "undefined";
-let getConn = () => require("./../../index").Connection;
-let getTableName = entity => {
-  if (entityHasMethod(entity, "tableName")) return entity.tableName();
-
-  let tableName = entity
-    .toString()
-    .substr(0, entity.toString().indexOf("{"))
-    .split(" ")[1]
-    .toLowerCase();
-
-  return tableName + (tableName.substr(-1) === "s" ? "es" : "s");
-};
 let treatRawPacketToEntity = response => {
   return response.map(element => {
     let e = new defaultEntity();
@@ -29,7 +15,7 @@ let treatRawPacketToEntity = response => {
 class BaseRepository {
   constructor(entity) {
     defaultEntity = entity;
-    tableName = getTableName(defaultEntity);
+    tableName = entity.tableName();
   }
 
   save(entity) {
@@ -55,7 +41,7 @@ class BaseRepository {
 
   update(entity) {}
 
-  findAll(options) {
+  find(options) {
     if (typeof options === "undefined") options = {};
 
     let queryBuilder = new SelectBuilder(), expr = queryBuilder.expr();
@@ -65,7 +51,13 @@ class BaseRepository {
       .limit(options.limit || 100)
       .offset(options.offset || 0);
 
-    return {
+    let finder = {
+      by: (field, value) => {
+        queryBuilder.where(expr.eq(field, value));
+
+        return finder;
+      },
+
       all: () => {
         let query = queryBuilder.limit(null).offset(null).toSql();
 
@@ -73,14 +65,20 @@ class BaseRepository {
           treatRawPacketToEntity(response)
         );
       },
-      by: (field, value) => {
-        let query = queryBuilder.where(expr.eq(field, value)).toSql();
-
-        return Connection.query(query).then(response =>
+      get: () =>
+        Connection.query(queryBuilder.getSql()).then(response =>
           treatRawPacketToEntity(response)
-        );
-      }
+        ),
+      first: () =>
+        Connection.query(queryBuilder.toSql()).then(response => {
+          response = treatRawPacketToEntity(response);
+          if (response.length > 0) return response[0];
+
+          return null;
+        })
     };
+
+    return finder;
   }
 }
 

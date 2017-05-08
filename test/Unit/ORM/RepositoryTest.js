@@ -6,7 +6,12 @@ const Connection = require("./../../../index").Connection,
 
 describe("RepositoryTest", () => {
   before(done => {
-    Connection.define("127.0.0.1", "root", "", "mynodefy");
+    Connection.define(
+      process.env.MYSQL_HOST || "127.0.0.1",
+      process.env.MYSQL_USER || "root",
+      process.env.MYSQL_PASS || "",
+      process.env.MYSQL_DBASE || "mynodefy"
+    );
 
     Connection.create("users", {
       id: {
@@ -33,7 +38,7 @@ describe("RepositoryTest", () => {
     let ur = new UserRepository(User);
 
     it("Should get a list of data inserted before", done => {
-      ur.findAll().all().then(collection => {
+      ur.find().all().then(collection => {
         assert.equal(4, collection.length);
         assert.equal(collection[3].name, "George Clooney");
 
@@ -42,8 +47,17 @@ describe("RepositoryTest", () => {
     });
 
     it("Should get a list of filtered data", done => {
-      ur.findAll().by("name", "Malala").then(collection => {
+      ur.find().by("name", "Malala").all().then(collection => {
         assert.instanceOf(collection[0], User);
+
+        done();
+      });
+    });
+
+    it("Should get only one entity", done => {
+      ur.find().by("id", 3).first().then(u => {
+        assert.instanceOf(u, User);
+        assert.equal(u.get("name"), "Kurt Russel");
 
         done();
       });

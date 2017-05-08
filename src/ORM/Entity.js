@@ -5,6 +5,15 @@ class Entity {
     isNewRecord = true;
   }
 
+  static tableName() {
+    let tableName = this.toString()
+      .substr(0, this.toString().indexOf("{"))
+      .split(" ")[1]
+      .toLowerCase();
+
+    return tableName + (tableName.substr(-1) === "s" ? "es" : "s");
+  }
+
   get(key) {
     if (typeof key === "undefined") {
       let attributes = {};

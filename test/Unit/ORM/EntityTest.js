@@ -1,7 +1,8 @@
 const assert = require("chai").assert;
 
 const ER = require("./../../../src/Validators/EntityRules"),
-  User = require("./../../DataProvider/Entity/User");
+  User = require("./../../DataProvider/Entity/User"),
+  Job = require("./../../DataProvider/Entity/Job");
 
 describe("EntityTest", () => {
   describe("Manipulating attributes", () => {
@@ -19,6 +20,18 @@ describe("EntityTest", () => {
       assert.equal("Soccer Player", u.get("job"));
       assert.isAtLeast(u.age, 25);
       assert.isTrue(u.get("active"));
+    });
+  });
+
+  describe("Getting primary key field", () => {
+    it("Should get PK from a well written entity class", () => {
+      let u = new User();
+      assert.equal("id", u.getPk());
+    });
+
+    it("Should get PK from a NOT well written entity class", () => {
+      let j = new Job();
+      assert.equal("id", j.getPk());
     });
   });
 
@@ -71,6 +84,16 @@ describe("EntityTest", () => {
       let errors = ER.validate(u).getErrors();
       assert.isTrue(Array.isArray(errors["name"]));
       assert.isTrue(Array.isArray(errors["password"]));
+    });
+  });
+
+  describe("getting table name", () => {
+    it("Should process for getting table name", () => {
+      assert.equal("users", User.tableName());
+    });
+
+    it("Should get from method", () => {
+      assert.equal("joblessly", Job.tableName());
     });
   });
 });

@@ -4,7 +4,8 @@ class User extends Entity {
   rules() {
     return {
       id: {
-        type: "integer"
+        type: "integer",
+        key: "primary"
       },
       name: {
         type: "varchar",

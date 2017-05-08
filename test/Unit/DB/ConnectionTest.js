@@ -6,7 +6,12 @@ const Connection = require("./../../../src/DB/Connection"),
 
 describe("ConnectionTest", () => {
   before(() => {
-    Connection.define("127.0.0.1", "root", "", "mynodefy");
+    Connection.define(
+      process.env.MYSQL_HOST || "127.0.0.1",
+      process.env.MYSQL_USER || "root",
+      process.env.MYSQL_PASS || "",
+      process.env.MYSQL_DBASE || "mynodefy"
+    );
   });
 
   describe("Creating tables", () => {
