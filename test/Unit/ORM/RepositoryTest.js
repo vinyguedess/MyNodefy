@@ -110,6 +110,50 @@ describe("RepositoryTest", () => {
     });
   });
 
+  describe("Repository deleting data", () => {
+    let ur = new UserRepository(User);
+
+    it("Should delete data by id", done => {
+      ur.delete(1).then(response => {
+        assert.isTrue(response);
+
+        done();
+      });
+    });
+
+    it("Should delete a list of id's", done => {
+      ur.delete([1, 2]).map((promise, index, allResponses) => {
+        promise.then(response => {
+          assert.isTrue(response);
+
+          if (index === allResponses.length - 1) done();
+        });
+      });
+    });
+
+    it("Should delete an entity", done => {
+      ur.find().by("id", 3).first().then(user => {
+        ur.delete(user).then(response => {
+          assert.isTrue(response);
+
+          done();
+        });
+      });
+    });
+
+    it("Should delete a list of entities", done => {
+      ur.find().all().then(collection => {
+        ur.delete(collection).map((promise, index, allResponses) => {
+          promise.then(response => {
+            assert.isTrue(response);
+
+            if (index === allResponses.length - 1) done();
+          });
+        });
+      });
+    });
+  });
+
   after(done => {
     Connection.drop("users").then(() => done());
   });

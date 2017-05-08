@@ -1,7 +1,8 @@
 const Connection = require("./../../index").Connection,
   SelectBuilder = require("./Builder/SelectBuilder"),
   InsertBuilder = require("./Builder/InsertBuilder"),
-  UpdateBuilder = require("./Builder/UpdateBuilder");
+  UpdateBuilder = require("./Builder/UpdateBuilder"),
+  DeleteBuilder = require("./Builder/DeleteBuilder");
 
 let defaultEntity, tableName;
 let treatRawPacketToEntity = response => {
@@ -91,6 +92,27 @@ class BaseRepository {
     };
 
     return finder;
+  }
+
+  delete(item) {
+    if (Array.isArray(item))
+      return item.map(i => {
+        return this.delete(i);
+      });
+
+    let key = "id";
+    if (typeof item === "object") {
+      key = item.getPk();
+      item = item.get(key);
+    }
+
+    let queryBuilder = new DeleteBuilder(tableName),
+      expr = queryBuilder.expr(),
+      query = queryBuilder.where(expr.eq(key, item)).toSql();
+
+    return Connection.query(query).then(response => {
+      return response.serverStatus === 2;
+    });
   }
 }
 
