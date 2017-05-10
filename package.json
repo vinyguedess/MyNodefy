@@ -1,6 +1,6 @@
 {
   "name": "mynodefy",
-  "version": "2.0.1",
+  "version": "2.0.3",
   "description": "A performatic and secure NodeJS' MySQL ORM",
   "keywords": [
     "mysql",
