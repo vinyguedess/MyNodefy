@@ -30,7 +30,7 @@ class EntityRules {
   static validate(entity) {
     this.erase();
 
-    if (typeof entity.rules === "undefined") return true;
+    if (typeof entity.rules === "undefined") return this;
 
     let rules = entity.rules();
     Object.keys(rules).forEach(field => {

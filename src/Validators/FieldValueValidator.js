@@ -3,9 +3,7 @@ class FieldValue {
     if (Array.isArray(value))
       return value
         .map(value => {
-          if (typeof value === "string") value = `"${value}"`;
-
-          return value;
+          return this.validate(value);
         })
         .join(",");
 

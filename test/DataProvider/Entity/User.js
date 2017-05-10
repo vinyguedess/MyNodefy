@@ -25,6 +25,17 @@ class User extends Entity {
       }
     };
   }
+
+  relations() {
+    return {
+      job: {
+        type: "belongsTo",
+        field: "job_id",
+        class: "test/DataProvider/Entity/Job",
+        foreignKey: "id"
+      }
+    };
+  }
 }
 
 module.exports = User;

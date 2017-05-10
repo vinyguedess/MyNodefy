@@ -1,18 +1,11 @@
-const Connection = require("./../../index").Connection,
+const Connection = require("./../DB/Connection"),
   SelectBuilder = require("./Builder/SelectBuilder"),
   InsertBuilder = require("./Builder/InsertBuilder"),
   UpdateBuilder = require("./Builder/UpdateBuilder"),
-  DeleteBuilder = require("./Builder/DeleteBuilder");
+  DeleteBuilder = require("./Builder/DeleteBuilder"),
+  RawPacketToEntity = require("./RawPacketToEntity");
 
 let defaultEntity, tableName;
-let treatRawPacketToEntity = response => {
-  return response.map(element => {
-    let e = new defaultEntity("found");
-    e.set(element);
-
-    return e;
-  });
-};
 
 class BaseRepository {
   constructor(entity) {
@@ -94,16 +87,16 @@ class BaseRepository {
         let query = queryBuilder.limit(null).offset(null).toSql();
 
         return Connection.query(query).then(response =>
-          treatRawPacketToEntity(response)
+          RawPacketToEntity(response, defaultEntity)
         );
       },
       get: () =>
         Connection.query(queryBuilder.toSql()).then(response =>
-          treatRawPacketToEntity(response)
+          RawPacketToEntity(response, defaultEntity)
         ),
       first: () =>
         Connection.query(queryBuilder.toSql()).then(response => {
-          response = treatRawPacketToEntity(response);
+          response = RawPacketToEntity(response, defaultEntity);
           if (response.length > 0) return response[0];
 
           return null;
